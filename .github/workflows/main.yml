@@ -1,0 +1,28 @@
+name: Build Mac App
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install packages
+      run: pip install kivy pandas numpy openpyxl xlsxwriter pyinstaller
+    
+    - name: Build app
+      run: pyinstaller --onefile --windowed --name DataProcessor ArtWork.py
+    
+    - name: Zip app
+      run: cd dist && zip -r DataProcessor.zip DataProcessor.app
+    
+    - uses: actions/upload-artifact@v4
+      with:
+        name: MacApp
+        path: dist/DataProcessor.zip
